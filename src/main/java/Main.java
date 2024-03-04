@@ -9,12 +9,17 @@ public class Main {
         ArrayList<Order> orders = Calculate.inputOrders();
         System.out.println("\nСписок товаров:");
         int countOrders = 0;
+        double priceCount = 0;
         for(Order order : orders) {
             countOrders += 1;
+            priceCount += order.price;
             System.out.println(countOrders + ". " + order.name + " (" + order.price + ")");
         }
 
-        System.out.println("Количество человек:" + countUsers);
+        System.out.println("Сумма товаров:" + priceCount);
+        double multiplyPrice = priceCount / countUsers;
+        String.format("%.2f", multiplyPrice);
+        System.out.println("Каждый человек должен заплатить" + multiplyPrice);
     }
 
     // Получаем количество людей
@@ -36,8 +41,8 @@ public class Main {
 // Объект товара
 class Order {
     String name; // Название товара
-    float price; // Цена товара
-    Order(String name, float price) {
+    double price; // Цена товара
+    Order(String name, double price) {
         this.name = name;
         this.price = price;
     }
@@ -55,7 +60,7 @@ class Calculate {
                 return orders;
             }
             System.out.println("Введите стоимость товара:");
-            float orderPrice = scanner.nextFloat();
+            double orderPrice = scanner.nextFloat();
             String.format("%.2f", orderPrice);
             orders.add(new Order(orderName, orderPrice));
             System.out.println("Товар успешно добавлен.");
