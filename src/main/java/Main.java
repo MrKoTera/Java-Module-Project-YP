@@ -16,12 +16,12 @@ public class Main {
         for(Order order : orders) {
             countOrders += 1;
             priceCount += order.price;
-            System.out.println(countOrders + ". " + order.name + " (" + Formatter.formatMoney(order.price) + " " + Formatter.formatRub(priceCount) + ")");
+            System.out.println(countOrders + ". " + order.name + " (" + Formatter.formatMoney(order.price) + " " + Formatter.formatRub(order.price) + ")");
         }
 
-        System.out.println("Сумма добавленных товаров:" + Formatter.formatMoney(priceCount) + ' ' + Formatter.formatRub(priceCount));
+        System.out.println("\nСумма добавленных товаров: " + Formatter.formatMoney(priceCount) + ' ' + Formatter.formatRub(priceCount));
         double multiplyPrice = priceCount / countUsers;
-        System.out.println("\nКаждый человек должен заплатить: " + Formatter.formatMoney(multiplyPrice) + ' ' + Formatter.formatRub(multiplyPrice));
+        System.out.println("Каждый человек должен заплатить: " + Formatter.formatMoney(multiplyPrice) + ' ' + Formatter.formatRub(multiplyPrice));
     }
 
     // Получаем количество людей
@@ -58,13 +58,17 @@ class Calculate {
         while (true) {
             System.out.println("Введите название товара:");
             String orderName = scanner.next();
-            if(orderName.equalsIgnoreCase("Завершить")) {
-                return orders;
-            }
             System.out.println("Введите стоимость товара:");
             double orderPrice = scanner.nextFloat();
+            if(orderPrice <= 0) {
+                System.out.println("Некорректная сумма!");
+                continue;
+            }
+
+
             orders.add(new Order(orderName, orderPrice));
-            System.out.println("Товар успешно добавлен!\nХотите добавить ещё товар?\nДля продолжения напишите любой символ\nДля отмены напишите \"Завершить\" в любом регистре.");
+
+            System.out.println("Товар успешно добавлен!\n\nХотите добавить ещё товар?\n1. Для продолжения напишите любой символ\n2. Для отмены напишите \"Завершить\" в любом регистре.");
             String action = scanner.next();
             if(action.equalsIgnoreCase("Завершить")) return orders;
         }
@@ -83,9 +87,9 @@ class Formatter {
 
         int rublesFloorInt = (int) rublesFloor % 100; // Преобразуем в int для switch/case
         if(rublesFloorInt > 19) {
-            rublesFloor = rublesFloorInt % 10;
-            System.out.println(rublesFloorInt);
+            rublesFloorInt = rublesFloorInt % 10;
         }
+
         switch (rublesFloorInt) {
             case 1: rublesOut = rub[0]; break;
             case 2:
