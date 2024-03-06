@@ -6,104 +6,57 @@ public class Main {
     public static void main(String[] args) {
         Locale.setDefault(new Locale("en", "US")); // Для отображения и ввода с точкой - меняем локаль
 
-        System.out.println("Введите кол-во человек, на которых будет разделён счёт:");
-        int countUsers = inputUsers();
+        int countUsers = countUsers();
+        double priceCount = priceCount();
 
-        ArrayList<Order> orders = Calculate.inputOrders();
+        sumResult(priceCount, countUsers);
+    }
+
+    // Вывод списка товаров
+    public static double priceCount() {
+        ProductList products = new ProductList();
+        Formatter format = new Formatter();
+
+        ArrayList<Product> productsList = products.inputOrders();
+
         System.out.println("\nДобавленные товары:");
         int countOrders = 0;
         double priceCount = 0;
-        for(Order order : orders) {
+        for(Product product : productsList) {
             countOrders += 1;
-            priceCount += order.price;
-            System.out.println(countOrders + ". " + order.name + " (" + Formatter.formatMoney(order.price) + " " + Formatter.formatRub(order.price) + ")");
+            priceCount += product.price;
+            System.out.println(countOrders + ". " + product.name + " (" + format.moneyCut(product.price) + " " + format.typeMoneyRub(product.price) + ")");
         }
+        return priceCount;
+    }
 
-        System.out.println("\nСумма добавленных товаров: " + Formatter.formatMoney(priceCount) + ' ' + Formatter.formatRub(priceCount));
-        double multiplyPrice = priceCount / countUsers;
-        System.out.println("Каждый человек должен заплатить: " + Formatter.formatMoney(multiplyPrice) + ' ' + Formatter.formatRub(multiplyPrice));
+    // Вывод суммы товаров и того, сколько нужно заплатить каждому
+    public static void sumResult(double money, int countUsers) {
+        Formatter format = new Formatter();
+        System.out.println("\nСумма добавленных товаров: " + format.moneyCut(money) + ' ' + format.typeMoneyRub(money));
+        double multiplyPrice = money / countUsers;
+        System.out.println("Каждый человек должен заплатить: " + format.moneyCut(multiplyPrice) + ' ' + format.typeMoneyRub(multiplyPrice));
+
     }
 
     // Получаем количество людей
-    public static int inputUsers() {
+    public static int countUsers() {
         while (true) {
-            Scanner scanner = new Scanner(System.in);
-            int countUsers = scanner.nextInt();
-            if(countUsers > 1) {
-                return countUsers;
-            } else if (countUsers == 1) {
-                System.out.println("Ошибка: пользователь один. Нечего делить.");
-            } else {
-                System.out.println("Ошибка: некорректное значения для подсчёта.");
+            try {
+                System.out.println("Введите кол-во человек, на которых будет разделён счёт:");
+                Scanner scanner = new Scanner(System.in);
+                int countUsers = scanner.nextInt();
+                if (countUsers > 1) {
+                    return countUsers;
+                } else if (countUsers == 1) {
+                    System.out.println("Ошибка: пользователь один. Нечего делить.");
+                } else {
+                    System.out.println("Ошибка: некорректное значение для подсчёта.");
+                }
+            } catch (Exception e) {
+                System.out.println("Ошибка: некорректное значение для подсчёта.");
             }
         }
     }
 }
 
-// Объект товара
-class Order {
-    String name; // Название товара
-    double price; // Цена товара
-    Order(String name, double price) {
-        this.name = name;
-        this.price = price;
-    }
-}
-
-// Класс для подсчёта
-class Calculate {
-    public static ArrayList<Order> inputOrders() {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Order> orders = new ArrayList<>();
-        while (true) {
-            System.out.println("Введите название товара:");
-            String orderName = scanner.next();
-            System.out.println("Введите стоимость товара:");
-            double orderPrice = scanner.nextFloat();
-            if(orderPrice <= 0) {
-                System.out.println("Некорректная сумма!");
-                continue;
-            }
-
-
-            orders.add(new Order(orderName, orderPrice));
-
-            System.out.println("Товар успешно добавлен!\n\nХотите добавить ещё товар?\n1. Для продолжения напишите любой символ\n2. Для отмены напишите \"Завершить\" в любом регистре.");
-            String action = scanner.next();
-            if(action.equalsIgnoreCase("Завершить")) return orders;
-        }
-    }
-}
-
-class Formatter {
-    String rubles;
-    public static String formatRub(double rubles) {
-        double rublesFloor = Math.floor(rubles);
-        String rub[] = new String[3];
-        rub[0] = new String("рубль");
-        rub[1] = new String("рубля");
-        rub[2] = new String("рублей");
-        String rublesOut;
-
-        int rublesFloorInt = (int) rublesFloor % 100; // Преобразуем в int для switch/case
-        if(rublesFloorInt > 19) {
-            rublesFloorInt = rublesFloorInt % 10;
-        }
-
-        switch (rublesFloorInt) {
-            case 1: rublesOut = rub[0]; break;
-            case 2:
-            case 3:
-            case 4: rublesOut = rub[1]; break;
-            default: rublesOut = rub[2]; break;
-        }
-        return rublesOut;
-    }
-    public static String formatMoney(double rubles) {
-        return String.format("%.2f", rubles);
-    }
-    Formatter(String rubles) {
-        this.rubles = rubles;
-    }
-
-}
